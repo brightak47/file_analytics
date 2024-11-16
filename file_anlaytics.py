@@ -32,12 +32,14 @@ def extract_text(file):
 
 # Function to analyze text using OpenAI API
 def analyze_with_openai(text):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=f"{expected_action}: {text}",
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": f"{expected_action}: {text}"}
+        ],
         max_tokens=200
     )
-    return response.choices[0].text.strip()
+    return response['choices'][0]['message']['content'].strip()
 
 # Function to analyze text using Claude AI API
 def analyze_with_claude(text):
