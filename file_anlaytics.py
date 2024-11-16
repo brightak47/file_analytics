@@ -10,8 +10,8 @@ from bs4 import BeautifulSoup
 from io import StringIO, BytesIO
 
 # Set up OpenAI and Claude AI API keys
-openai.api_key = "YOUR_OPENAI_API_KEY"
-claude_api_key = "YOUR_CLAUDE_API_KEY"
+openai.api_key = st.text_input('Enter your OpenAI API Key', type='password')
+claude_api_key = st.text_input('Enter your Claude API Key', type='password')
 
 # Function to extract text from different file types
 def extract_text(file):
@@ -34,7 +34,7 @@ def extract_text(file):
 def analyze_with_openai(text):
     response = openai.Completion.create(
         engine="text-davinci-003",
-        prompt=f"Analyze the following text: {text}",
+        prompt=f"{expected_action}: {text}",
         max_tokens=200
     )
     return response.choices[0].text.strip()
@@ -42,13 +42,15 @@ def analyze_with_openai(text):
 # Function to analyze text using Claude AI API
 def analyze_with_claude(text):
     headers = {"Authorization": f"Bearer {claude_api_key}", "Content-Type": "application/json"}
-    data = {"prompt": f"Analyze the following text: {text}", "max_tokens": 200}
+    data = {"prompt": f"{expected_action}: {text}", "max_tokens": 200}
     response = requests.post("https://api.anthropic.com/v1/complete", headers=headers, json=data)
     return response.json().get("completion", "")
 
 # Streamlit app layout
 st.title("File Analysis Tool with OpenAI and Claude AI")
 uploaded_file = st.file_uploader("Upload a file (txt, pdf, docx, csv, html)", type=["txt", "pdf", "docx", "csv", "html"])
+
+expected_action = st.text_input('What do you want to do with the file? (e.g., summarize, analyze sentiment, extract key points)')
 
 if uploaded_file is not None:
     # Extract text from the uploaded file
