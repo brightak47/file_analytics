@@ -40,7 +40,7 @@ def analyze_with_openai(text):
             ],
             max_tokens=200
         )
-    except openai.error.OpenAIError as e:
+    except Exception as e:
         st.error(f"Error with OpenAI API: {str(e)}")
         return ""
     return response['choices'][0]['message']['content'].strip()
